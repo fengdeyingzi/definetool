@@ -478,8 +478,15 @@ class DefineUtil {
           upline.addAll("*/".codeUnits);
         }
         if (isDelComment && isCon(upline, "*/".codeUnits)) {
-          upline.removeLast();
-          upline.removeLast();
+          if(upline[upline.length-1] == "\r".codeUnitAt(0)){
+              upline.removeLast();
+              upline.removeLast();
+              upline.removeLast();
+            }else{
+              upline.removeLast();
+              upline.removeLast();
+            }
+          
         }
       }
       upline = curline;
