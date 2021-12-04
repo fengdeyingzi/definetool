@@ -33,7 +33,7 @@
 ## 不足与限制
 1. 在#define与#endif之间不要使用多行注释/**/，yaml文件中#define与#endif之间不要使用#注释
 2. #与define之间不能出现空格
-3. 代码替换不会备份，若担心代码丢失请先备份代码
+3. 替换前的代码会备份为.bak文件，不过还是建议在执行替换前备份代码
 
 ## 默认排除文件夹：  
 bin build .git .svn debug release

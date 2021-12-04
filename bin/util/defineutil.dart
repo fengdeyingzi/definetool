@@ -45,6 +45,13 @@ class DefineUtil {
         if (fileNameList.contains(endName)) {
           List<int> data = FileUtil.readData(file.path);
           if(isCon(data, "#ifdef".codeUnits)){
+            File filebak = File(file.path+".bak");
+            if(!filebak.existsSync()){
+              filebak.createSync();
+            }
+            if(data.length>0){
+              FileUtil.writeToFileData(data, filebak.path);
+            }
             codeList.add(File(file.path));
           }
           

@@ -33,7 +33,7 @@ Do not use multiline comments for the content defined in the macro
 ## Deficiencies and limitations
 1. Do not use multiline comments /* */, between #define and #endif, and do not use # comments between #define and #endif in yaml files
 2. #Spaces cannot appear between and define
-3. Code replacement will not be backed up. If you are worried about code loss, please back up the code first
+3. The code before replacement will be backed up as a .bak file, but it is recommended to back up the code before replacement
 
 ## Default exclude folder:  
 bin build .git .svn debug release
