@@ -1,0 +1,36 @@
+name: face_plus CLI
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        include:
+          - os: ubuntu-latest
+            output-name: linux_x64/face_plus
+          - os: macOS-latest
+            output-name: macos_x64/face_plus
+          - os: windows-latest
+            output-name: win_x64/face_plus.exe
+    steps:
+      - uses: actions/checkout@v2
+      - uses: DanTup/gh-actions/setup-dart@master
+      - name: install packages
+        run: pub get
+      - name: make build/linux_x64 directory
+        run: mkdir -p build/linux_x64
+      - name: make build/macos_x64 directory
+        run: mkdir -p build/macos_x64
+      - name: make build/win_x64 directory
+        run: mkdir -p build/win_x64
+      - name: compile to native
+        run: dart compile exe bin/main.dart -v -o build/${{ matrix.output-name }}
+      - uses: actions/upload-artifact@v1
+        with:
+          name: face_plus
+          path: build
