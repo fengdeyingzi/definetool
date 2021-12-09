@@ -22,14 +22,14 @@ jobs:
       - uses: DanTup/gh-actions/setup-dart@master
       - name: install packages
         run: pub get
-      - name: make build/linux_x64 directory
-        run: mkdir -p build/linux_x64
-      - name: make build/macos_x64 directory
-        run: mkdir -p build/macos_x64
-      - name: make build/win_x64 directory
-        run: mkdir -p build/win_x64
+      - name: make release/linux_x64 directory
+        run: mkdir -p release/linux_x64
+      - name: make release/macos_x64 directory
+        run: mkdir -p release/macos_x64
+      - name: make release/win_x64 directory
+        run: mkdir -p release/win_x64
       - name: compile to native
-        run: dart compile exe bin/definetool.dart -v -o build/${{ matrix.output-name }}
+        run: dart compile exe bin/definetool.dart -v -o release/${{ matrix.output-name }}
       - uses: actions/upload-artifact@v1
         with:
           name: face_plus
