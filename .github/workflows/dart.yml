@@ -12,6 +12,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macOS-latest]
         include:
           - os: ubuntu-latest
+            platform: arm
             output-name: linux_x64/face_plus
           - os: macOS-latest
             output-name: macos_x64/face_plus
@@ -20,6 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: DanTup/gh-actions/setup-dart@master
+      - name: platform
+        run: file /bin/ls
       - name: install packages
         run: pub get
       - name: make release/linux_x64 directory
