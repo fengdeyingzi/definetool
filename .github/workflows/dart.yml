@@ -13,11 +13,11 @@ jobs:
         include:
           - os: ubuntu-latest
             platform: arm
-            output-name: linux_x64/face_plus
+            output-name: linux_x64/definetool
           - os: macOS-latest
-            output-name: macos_x64/face_plus
+            output-name: macos_x64/definetool
           - os: windows-latest
-            output-name: win_x64/face_plus.exe
+            output-name: win_x64/definetool.exe
     steps:
       - uses: actions/checkout@v2
       - uses: DanTup/gh-actions/setup-dart@master
