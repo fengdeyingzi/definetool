@@ -146,10 +146,11 @@ class DefineUtil {
   }
 
 //判断list中是否存在list2
-  bool isCon(List<int> list, List<int> list2) {
+  bool isCon(List<int> list, List<int> list2,{bool isFirst=false}) {
     int type = 0;
     int i2 = 0;
-    for (int i = 0; i < list.length; i++) {
+    if(!isFirst){
+      for (int i = 0; i < list.length; i++) {
       switch (type) {
         case 0:
           if (list2[i2] == list[i]) {
@@ -163,6 +164,32 @@ class DefineUtil {
           break;
       }
     }
+    }else{
+      for (int i = 0; i < list.length; i++) {
+      switch (type) {
+        case 0:
+          if(list[i] == " ".codeUnitAt(0)){
+            continue;
+          }else{
+            type = 1;
+            i--;
+          }
+          break;
+        case 1:
+          if (list2[i2] == list[i]) {
+            i2++;
+            if (i2 == list2.length) {
+              return true;
+            }
+          } else {
+            i2 = 0;
+            return false;
+          }
+          break;
+      }
+    }
+    }
+    
     return false;
   }
 
@@ -529,7 +556,7 @@ class DefineUtil {
           //删除#
           for (int j = i + 1; j < endindex; j++) {
             nextline = lines[j];
-            if (isCon(nextline, "#".codeUnits)) {
+            if (isCon(nextline, "#".codeUnits,isFirst: true)) {
               nextline.removeAt(0);
             }
           }
@@ -537,7 +564,7 @@ class DefineUtil {
           print("第${i+1}行 找到#ifdef");
           for (int j = i + 1; j < endindex; j++) {
             nextline = lines[j];
-            if (!isCon(nextline, "#".codeUnits)) {
+            if (!isCon(nextline, "#".codeUnits,isFirst: true)) {
               nextline.insertAll(0, "#".codeUnits);
             }
           }
