@@ -8,7 +8,7 @@ import 'FileUtil.dart';
 class DefineUtil {
   List<String> exdirList = ["bin", "build", ".git", ".svn", "debug", "release"];
   List<String> definesList = []; //要开启的宏
-  List<String> fileNameList = [".dart", ".yaml", ".java", ".kt",".go",".rs",".js",".ts",".php",".cs",".swift",".py"];
+  List<String> fileNameList = [".dart", ".yaml", ".yml", ".podspec", ".java", ".kt", ".go",".rs",".js",".ts",".php",".cs",".swift",".py"];
   List<File> codeList = [];
   //要开启的宏定义名字
   String defineName = "WINDOWS";
@@ -624,7 +624,7 @@ class DefineUtil {
       var endName = FileUtil.getEndName(codeList[i].path);
       var name = FileUtil.getName(codeList[i].path);
       List<int> data = FileUtil.readData(codeList[i].path);
-      if(endName == ".yaml" || endName == ".yml" || name == "Podfile"){
+      if(endName == ".yaml" || endName == ".yml" || endName == ".podspec"){
         List<int> temp = definedFile22(data);
         FileUtil.writeToFileData(temp, codeList[i].path);
       }else{
