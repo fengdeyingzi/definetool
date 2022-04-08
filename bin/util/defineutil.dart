@@ -49,7 +49,7 @@ class DefineUtil {
             if(!filebak.existsSync()){
               filebak.createSync();
             }
-            if(data.length>0){
+            if(data.isNotEmpty){
               FileUtil.writeToFileData(data, filebak.path);
             }
             codeList.add(File(file.path));
@@ -486,11 +486,47 @@ class DefineUtil {
     bool isAddComment = false; //是否需要添加注释
 //是否在宏定义内
     List<int> upline = [];
+    //当前宏是否已定义
+    bool isDefined = false;
     for (int i = 0; i < lines.length - 1; i++) {
       List<int> curline = lines[i];
       List<int> nextline = lines[i + 1];
       if (isCon(curline, "#ifdef".codeUnits) && !isCon(curline, "\"".codeUnits)) {
         if (isConList(curline, definesList)) {
+          isDefined = true;
+          print("第${i+1}行 去除注释");
+          isDelComment = true;
+          isAddComment = false;
+          //删除下一行的/*
+          if (isCon(nextline, "/*".codeUnits)) {
+            nextline.removeAt(0);
+            nextline.removeAt(0);
+          }
+        } else {
+          isDefined = false;
+          isDelComment = false;
+          isAddComment = true;
+          print("第${i+1}行 找到#ifdef");
+          if (!isCon(nextline, "/*".codeUnits)) {
+            nextline.insertAll(0, "/*".codeUnits);
+          }
+        }
+      } else if(isCon(curline, "#else".codeUnits) && !isCon(curline, "\"".codeUnits)){
+        if (isAddComment && !isCon(upline, "*/".codeUnits)) {
+          upline.addAll("*/".codeUnits);
+        }
+        if (isDelComment && isCon(upline, "*/".codeUnits)) {
+          if(upline[upline.length-1] == "\r".codeUnitAt(0)){
+              upline.removeLast();
+              upline.removeLast();
+              upline.removeLast();
+            }else{
+              upline.removeLast();
+              upline.removeLast();
+            }
+          
+        }
+        if (!isDefined) {
           print("第${i+1}行 去除注释");
           isDelComment = true;
           isAddComment = false;
@@ -507,7 +543,8 @@ class DefineUtil {
             nextline.insertAll(0, "/*".codeUnits);
           }
         }
-      } else if (isCon(curline, "#endif".codeUnits) && !isCon(curline, "\"".codeUnits)) {
+      }
+       else if (isCon(curline, "#endif".codeUnits) && !isCon(curline, "\"".codeUnits)) {
         if (isAddComment && !isCon(upline, "*/".codeUnits)) {
           upline.addAll("*/".codeUnits);
         }
@@ -585,8 +622,9 @@ class DefineUtil {
     for(int i=0;i<codeList.length;i++){
       print("\n"+codeList[i].path);
       var endName = FileUtil.getEndName(codeList[i].path);
+      var name = FileUtil.getName(codeList[i].path);
       List<int> data = FileUtil.readData(codeList[i].path);
-      if(endName == ".yaml"){
+      if(endName == ".yaml" || endName == ".yml" || name == "Podfile"){
         List<int> temp = definedFile22(data);
         FileUtil.writeToFileData(temp, codeList[i].path);
       }else{

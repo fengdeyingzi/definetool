@@ -74,6 +74,7 @@ class FileUtil  {
         return path.substring(0, i);
       }
     }
+    return null;
   }
 
   static void rename(String path,String name){
