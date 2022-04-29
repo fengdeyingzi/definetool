@@ -1,5 +1,5 @@
 # definetool
-English | [简体中文](README.MD)
+English | [简体中文](README.md)
 
 This is a tool for adding define macro definition to programming languages. It is used to distinguish different versions and platforms. The implementation principle is to annotate unnecessary code by using define macros. This tool is theoretically applicable to any programming language. 
 
