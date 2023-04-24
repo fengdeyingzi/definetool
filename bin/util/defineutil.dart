@@ -8,7 +8,7 @@ import 'FileUtil.dart';
 class DefineUtil {
   List<String> exdirList = ["bin", "build", ".git", ".svn", "debug", "release"];
   List<String> definesList = []; //要开启的宏
-  List<String> fileNameList = [".dart", ".yaml", ".yml", ".podspec", ".java", ".kt", ".go",".rs",".js",".ts",".php",".cs",".swift",".py"];
+  List<String> fileNameList = [".dart", ".yaml", ".yml", ".podspec", ".java", ".kt", ".go",".rs",".js",".ts",".php",".cs",".swift",".py",".cpp",".c"];
   List<File> codeList = [];
   //要开启的宏定义名字
   String defineName = "WINDOWS";
