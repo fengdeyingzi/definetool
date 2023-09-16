@@ -8,8 +8,7 @@ import 'util/defineutil.dart';
 void main(List<String> arguments) {
 //    #ifdef WEB
 /*  print('Hello web!');*/
-//    #endif
-//    #ifdef WINDOWS
+//    #else
   print("Hello windows");
 //    #endif
 
@@ -43,6 +42,7 @@ void main(List<String> arguments) {
 
 示例：definetool -define WINDOWS 
       """);
+      return;
     } else {
       if (isDefine) {
         defineList?.add(item);

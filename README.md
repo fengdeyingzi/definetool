@@ -24,6 +24,9 @@
 
 宏内定义的内容不要使用多行注释
 
+## 支持文件类型
+目前支持以下文件类型：  
+.dart, .yaml, .yml, .podspec, .java, .kt, .go, .rs, .js, .ts, .php, .cs, .swift, .py
 
 ## 命令使用
 -define 定义宏  
