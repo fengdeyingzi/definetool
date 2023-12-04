@@ -6,12 +6,14 @@ import 'util/defineutil.dart';
 
 */
 void main(List<String> arguments) {
-//    #ifdef WEB
-/*  print('Hello web!');*/
-//    #endif
-//    #ifdef WINDOWS
+// ###ifdef WEB
+/*  print('Hello web!');
+*/
+// ###endif
+// ###ifdef WINDOWS
   print("Hello windows");
-//    #endif
+
+// ###endif
 
   print("宏定义替换工具");
   print("风的影子 编写");
