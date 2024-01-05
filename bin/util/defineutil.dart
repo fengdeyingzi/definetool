@@ -5,6 +5,7 @@ import 'dart:math';
 
 import 'FileUtil.dart';
 
+@deprecated
 class DefineUtil {
   List<String> exdirList = ["bin", "build", ".git", ".svn", "debug", "release"];
   List<String> definesList = []; //要开启的宏
@@ -15,6 +16,7 @@ class DefineUtil {
 
   List<int> define = "#ifdef".codeUnits;
   List<int> endif = "#endif".codeUnits;
+  List<int> ifndef = "#ifndef".codeUnits;
   String dirpath = "";
 
   //初始化

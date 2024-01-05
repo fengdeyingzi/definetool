@@ -1,4 +1,4 @@
-import 'util/defineutil.dart';
+import 'util/DefineTool.dart';
 
 /*
 宏定义替换工具
@@ -7,9 +7,8 @@ import 'util/defineutil.dart';
 */
 void main(List<String> arguments) {
 //    #ifdef WEB
-/*  print('Hello web!');*/
 //    #else
-  print("Hello windows");
+/*  print("Hello windows");*/
 //    #endif
 
   print("宏定义替换工具");
@@ -35,13 +34,7 @@ void main(List<String> arguments) {
       isDefine = false;
       exDirList = [];
     } else if (item == "-h") {
-      print("""
--define     定义宏  
--exdir      排除文件夹  
--h          查看帮助
-
-示例：definetool -define WINDOWS 
-      """);
+      printHelp();
       return;
     } else {
       if (isDefine) {
@@ -52,6 +45,24 @@ void main(List<String> arguments) {
       }
     }
   }
-  DefineUtil util = DefineUtil(dir, exdir: exDirList, defines: defineList);
+  DefineTool util = DefineTool();
+  if(exDirList!=null)
+    util.exdirList = exDirList;
+  if(defineList!=null)
+    util.setDefines(defineList);
+  else{
+    printHelp();
+    return;
+  }
   util.start();
+}
+
+void printHelp() {
+  print("""
+-define     定义宏  
+-exdir      排除文件夹  
+-h          查看帮助
+
+示例：definetool -define WINDOWS 
+      """);
 }
