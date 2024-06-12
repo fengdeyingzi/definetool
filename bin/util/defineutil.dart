@@ -5,6 +5,10 @@ import 'dart:math';
 
 import 'FileUtil.dart';
 
+const MACRO_IFDEF = "###ifdef";
+const MACRO_ENDIF = "###endif";
+const MACRO_ELSE = "###else";
+
 class DefineUtil {
   List<String> exdirList = ["bin", "build", ".git", ".svn", "debug", "release"];
   List<String> definesList = []; //要开启的宏
@@ -31,8 +35,8 @@ class DefineUtil {
   //要开启的宏定义名字
   String defineName = "WINDOWS";
 
-  List<int> define = "###ifdef".codeUnits;
-  List<int> endif = "###endif".codeUnits;
+  List<int> define = MACRO_IFDEF.codeUnits;
+  List<int> endif = MACRO_ENDIF.codeUnits;
   String dirpath = "";
 
   //初始化
@@ -62,7 +66,7 @@ class DefineUtil {
         var endName = FileUtil.getEndName(file.path);
         if (fileNameList.contains(endName)) {
           List<int> data = FileUtil.readData(file.path);
-          if (isCon(data, "###ifdef".codeUnits)) {
+          if (isCon(data, MACRO_IFDEF.codeUnits)) {
             File filebak = File(file.path + ".bak");
             if (!filebak.existsSync()) {
               filebak.createSync();
@@ -507,7 +511,7 @@ class DefineUtil {
     for (int i = 0; i < lines.length - 1; i++) {
       List<int> curline = lines[i];
       List<int> nextline = lines[i + 1];
-      if (isCon(curline, "###ifdef".codeUnits) && !isCon(curline, "\"".codeUnits)) {
+      if (isCon(curline, MACRO_IFDEF.codeUnits) && !isCon(curline, "\"".codeUnits)) {
         if (isConList(curline, definesList)) {
           isDefined = true;
           print("第${i + 1}行 去除注释");
@@ -522,12 +526,12 @@ class DefineUtil {
           isDefined = false;
           isDelComment = false;
           isAddComment = true;
-          print("第${i + 1}行 找到###ifdef");
+          print("第${i + 1}行 找到${MACRO_IFDEF}");
           if (!isCon(nextline, "/*".codeUnits)) {
             nextline.insertAll(0, "/*".codeUnits);
           }
         }
-      } else if (isCon(curline, "#else".codeUnits) && !isCon(curline, "\"".codeUnits)) {
+      } else if (isCon(curline, MACRO_ELSE.codeUnits) && !isCon(curline, "\"".codeUnits)) {
         if (isAddComment && !isCon(upline, "*/".codeUnits)) {
           upline.addAll("*/".codeUnits);
         }
@@ -553,12 +557,12 @@ class DefineUtil {
         } else {
           isDelComment = false;
           isAddComment = true;
-          print("第${i + 1}行 找到###ifdef");
+          print("第${i + 1}行 找到${MACRO_IFDEF}");
           if (!isCon(nextline, "/*".codeUnits)) {
             nextline.insertAll(0, "/*".codeUnits);
           }
         }
-      } else if (isCon(curline, "###endif".codeUnits) && !isCon(curline, "\"".codeUnits)) {
+      } else if (isCon(curline, MACRO_ENDIF.codeUnits) && !isCon(curline, "\"".codeUnits)) {
         if (isAddComment && !isCon(upline, "*/".codeUnits)) {
           upline.addAll("*/".codeUnits);
         }
@@ -594,9 +598,9 @@ class DefineUtil {
       if (i != lines.length - 1) {
         nextline = lines[i + 1];
       }
-      if (isCon(curline, "###ifdef".codeUnits) && !isCon(curline, "\"".codeUnits)) {
+      if (isCon(curline, MACRO_IFDEF.codeUnits) && !isCon(curline, "\"".codeUnits)) {
         for (int j = i; j < lines.length; j++) {
-          if (isCon(lines[j], "###endif".codeUnits) && !isCon(curline, "\"".codeUnits)) {
+          if (isCon(lines[j], MACRO_ENDIF.codeUnits) && !isCon(curline, "\"".codeUnits)) {
             endindex = j;
             break;
           }
@@ -611,7 +615,7 @@ class DefineUtil {
             }
           }
         } else {
-          print("第${i + 1}行 找到###ifdef");
+          print("第${i + 1}行 找到${MACRO_IFDEF}");
           for (int j = i + 1; j < endindex; j++) {
             nextline = lines[j];
             if (!isCon(nextline, "#".codeUnits, isFirst: true)) {
