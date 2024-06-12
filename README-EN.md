@@ -6,13 +6,13 @@ This is a tool for adding define macro definition to programming languages. It i
 ## Mode of use
 ### 1.Add macro comments to your code
 ```
-    // #ifdef WINDOWS
+    // ###ifdef WINDOWS
     print("hello windows");
-    // #endif
+    // ###endif
 
-    // #ifdef WEB
+    // ###ifdef WEB
     print("hello web");
-    // #endif
+    // ###endif
 ```
 ### 2.Run findtool in the directory where the code is located and define the macro: WINDOWS
 This command can be operated directly on this project to view the effect
@@ -31,7 +31,7 @@ Do not use multiline comments for the content defined in the macro
 -h View     help  
 
 ## Deficiencies and limitations
-1. Do not use multiline comments /* */, between #define and #endif, and do not use # comments between #define and #endif in yaml files
+1. Do not use multiline comments /* */, between ###ifdef and ###endif, and do not use # comments between ###ifdef and ###endif in yaml files
 2. #Spaces cannot appear between and define
 3. The code before replacement will be backed up as a .bak file, but it is recommended to back up the code before replacement
 

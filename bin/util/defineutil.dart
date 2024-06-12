@@ -5,21 +5,43 @@ import 'dart:math';
 
 import 'FileUtil.dart';
 
+const MACRO_IFDEF = "###ifdef";
+const MACRO_ENDIF = "###endif";
+const MACRO_ELSE = "###else";
+
 class DefineUtil {
   List<String> exdirList = ["bin", "build", ".git", ".svn", "debug", "release"];
   List<String> definesList = []; //要开启的宏
-  List<String> fileNameList = [".dart", ".yaml", ".yml", ".podspec", ".java", ".kt", ".go",".rs",".js",".ts",".php",".cs",".swift",".py"];
+  List<String> fileNameList = [
+    ".dart",
+    ".yaml",
+    ".yml",
+    ".podspec",
+    ".java",
+    ".kt",
+    ".go",
+    ".rs",
+    ".js",
+    ".ts",
+    ".php",
+    ".cs",
+    ".swift",
+    ".py",
+    ".cpp",
+    ".c",
+    ".rc"
+  ];
   List<File> codeList = [];
   //要开启的宏定义名字
   String defineName = "WINDOWS";
 
-  List<int> define = "#ifdef".codeUnits;
-  List<int> endif = "#endif".codeUnits;
+  List<int> define = MACRO_IFDEF.codeUnits;
+  List<int> endif = MACRO_ENDIF.codeUnits;
   String dirpath = "";
 
   //初始化
-  DefineUtil(this.dirpath,
-     {
+  DefineUtil(
+    this.dirpath, {
     List<String>? exdir,
     List<String>? defines,
   }) {
@@ -44,22 +66,20 @@ class DefineUtil {
         var endName = FileUtil.getEndName(file.path);
         if (fileNameList.contains(endName)) {
           List<int> data = FileUtil.readData(file.path);
-          if(isCon(data, "#ifdef".codeUnits)){
-            File filebak = File(file.path+".bak");
-            if(!filebak.existsSync()){
+          if (isCon(data, MACRO_IFDEF.codeUnits)) {
+            File filebak = File(file.path + ".bak");
+            if (!filebak.existsSync()) {
               filebak.createSync();
             }
-            if(data.isNotEmpty){
+            if (data.isNotEmpty) {
               FileUtil.writeToFileData(data, filebak.path);
             }
             codeList.add(File(file.path));
           }
-          
         }
       }
     }
   }
-
 
   //判断List指定位置是否和list2一致
   bool strcmp(List<int> list, int index, List<int> list2) {
@@ -146,57 +166,57 @@ class DefineUtil {
   }
 
 //判断list中是否存在list2
-  bool isCon(List<int> list, List<int> list2,{bool isFirst=false}) {
+  bool isCon(List<int> list, List<int> list2, {bool isFirst = false}) {
     int type = 0;
     int i2 = 0;
-    if(!isFirst){
+    if (!isFirst) {
       for (int i = 0; i < list.length; i++) {
-      switch (type) {
-        case 0:
-          if (list2[i2] == list[i]) {
-            i2++;
-            if (i2 == list2.length) {
-              return true;
+        switch (type) {
+          case 0:
+            if (list2[i2] == list[i]) {
+              i2++;
+              if (i2 == list2.length) {
+                return true;
+              }
+            } else {
+              i2 = 0;
             }
-          } else {
-            i2 = 0;
-          }
-          break;
+            break;
+        }
+      }
+    } else {
+      for (int i = 0; i < list.length; i++) {
+        switch (type) {
+          case 0:
+            if (list[i] == " ".codeUnitAt(0)) {
+              continue;
+            } else {
+              type = 1;
+              i--;
+            }
+            break;
+          case 1:
+            if (list2[i2] == list[i]) {
+              i2++;
+              if (i2 == list2.length) {
+                return true;
+              }
+            } else {
+              i2 = 0;
+              return false;
+            }
+            break;
+        }
       }
     }
-    }else{
-      for (int i = 0; i < list.length; i++) {
-      switch (type) {
-        case 0:
-          if(list[i] == " ".codeUnitAt(0)){
-            continue;
-          }else{
-            type = 1;
-            i--;
-          }
-          break;
-        case 1:
-          if (list2[i2] == list[i]) {
-            i2++;
-            if (i2 == list2.length) {
-              return true;
-            }
-          } else {
-            i2 = 0;
-            return false;
-          }
-          break;
-      }
-    }
-    }
-    
+
     return false;
   }
 
   bool isConList(List<int> list, List<String> list2) {
-    for(int i=0;i<list2.length;i++){
+    for (int i = 0; i < list2.length; i++) {
       var item = list2[i].codeUnits;
-      if(isCon(list, item)){
+      if (isCon(list, item)) {
         return true;
       }
     }
@@ -491,10 +511,10 @@ class DefineUtil {
     for (int i = 0; i < lines.length - 1; i++) {
       List<int> curline = lines[i];
       List<int> nextline = lines[i + 1];
-      if (isCon(curline, "#ifdef".codeUnits) && !isCon(curline, "\"".codeUnits)) {
+      if (isCon(curline, MACRO_IFDEF.codeUnits) && !isCon(curline, "\"".codeUnits)) {
         if (isConList(curline, definesList)) {
           isDefined = true;
-          print("第${i+1}行 去除注释");
+          print("第${i + 1}行 去除注释");
           isDelComment = true;
           isAddComment = false;
           //删除下一行的/*
@@ -506,28 +526,27 @@ class DefineUtil {
           isDefined = false;
           isDelComment = false;
           isAddComment = true;
-          print("第${i+1}行 找到#ifdef");
+          print("第${i + 1}行 找到${MACRO_IFDEF}");
           if (!isCon(nextline, "/*".codeUnits)) {
             nextline.insertAll(0, "/*".codeUnits);
           }
         }
-      } else if(isCon(curline, "#else".codeUnits) && !isCon(curline, "\"".codeUnits)){
+      } else if (isCon(curline, MACRO_ELSE.codeUnits) && !isCon(curline, "\"".codeUnits)) {
         if (isAddComment && !isCon(upline, "*/".codeUnits)) {
           upline.addAll("*/".codeUnits);
         }
         if (isDelComment && isCon(upline, "*/".codeUnits)) {
-          if(upline[upline.length-1] == "\r".codeUnitAt(0)){
-              upline.removeLast();
-              upline.removeLast();
-              upline.removeLast();
-            }else{
-              upline.removeLast();
-              upline.removeLast();
-            }
-          
+          if (upline[upline.length - 1] == "\r".codeUnitAt(0)) {
+            upline.removeLast();
+            upline.removeLast();
+            upline.removeLast();
+          } else {
+            upline.removeLast();
+            upline.removeLast();
+          }
         }
         if (!isDefined) {
-          print("第${i+1}行 去除注释");
+          print("第${i + 1}行 去除注释");
           isDelComment = true;
           isAddComment = false;
           //删除下一行的/*
@@ -538,26 +557,24 @@ class DefineUtil {
         } else {
           isDelComment = false;
           isAddComment = true;
-          print("第${i+1}行 找到#ifdef");
+          print("第${i + 1}行 找到${MACRO_IFDEF}");
           if (!isCon(nextline, "/*".codeUnits)) {
             nextline.insertAll(0, "/*".codeUnits);
           }
         }
-      }
-       else if (isCon(curline, "#endif".codeUnits) && !isCon(curline, "\"".codeUnits)) {
+      } else if (isCon(curline, MACRO_ENDIF.codeUnits) && !isCon(curline, "\"".codeUnits)) {
         if (isAddComment && !isCon(upline, "*/".codeUnits)) {
           upline.addAll("*/".codeUnits);
         }
         if (isDelComment && isCon(upline, "*/".codeUnits)) {
-          if(upline[upline.length-1] == "\r".codeUnitAt(0)){
-              upline.removeLast();
-              upline.removeLast();
-              upline.removeLast();
-            }else{
-              upline.removeLast();
-              upline.removeLast();
-            }
-          
+          if (upline[upline.length - 1] == "\r".codeUnitAt(0)) {
+            upline.removeLast();
+            upline.removeLast();
+            upline.removeLast();
+          } else {
+            upline.removeLast();
+            upline.removeLast();
+          }
         }
       }
       upline = curline;
@@ -573,35 +590,35 @@ class DefineUtil {
   List<int> definedFile22(List<int> data) {
     List<int> buffer = [];
     List<List<int>> lines = splitCode(data);
-    
+
     int endindex = 0; //endif所在的行
     for (int i = 0; i < lines.length; i++) {
       List<int> curline = lines[i];
       List<int> nextline = lines[i];
-      if(i!=lines.length-1){
-        nextline = lines[i+1];
+      if (i != lines.length - 1) {
+        nextline = lines[i + 1];
       }
-      if (isCon(curline, "#ifdef".codeUnits) && !isCon(curline, "\"".codeUnits)) {
+      if (isCon(curline, MACRO_IFDEF.codeUnits) && !isCon(curline, "\"".codeUnits)) {
         for (int j = i; j < lines.length; j++) {
-          if (isCon(lines[j], "#endif".codeUnits) && !isCon(curline, "\"".codeUnits)) {
+          if (isCon(lines[j], MACRO_ENDIF.codeUnits) && !isCon(curline, "\"".codeUnits)) {
             endindex = j;
             break;
           }
         }
         if (isConList(curline, definesList)) {
-          print("第${i+1}行 去除注释");
+          print("第${i + 1}行 去除注释");
           //删除#
           for (int j = i + 1; j < endindex; j++) {
             nextline = lines[j];
-            if (isCon(nextline, "#".codeUnits,isFirst: true)) {
+            if (isCon(nextline, "#".codeUnits, isFirst: true)) {
               nextline.removeAt(0);
             }
           }
         } else {
-          print("第${i+1}行 找到#ifdef");
+          print("第${i + 1}行 找到${MACRO_IFDEF}");
           for (int j = i + 1; j < endindex; j++) {
             nextline = lines[j];
-            if (!isCon(nextline, "#".codeUnits,isFirst: true)) {
+            if (!isCon(nextline, "#".codeUnits, isFirst: true)) {
               nextline.insertAll(0, "#".codeUnits);
             }
           }
@@ -618,16 +635,16 @@ class DefineUtil {
   //开始执行转换
   void start() {
     _doFileListDir(dirpath);
-    
-    for(int i=0;i<codeList.length;i++){
-      print("\n"+codeList[i].path);
+
+    for (int i = 0; i < codeList.length; i++) {
+      print("\n" + codeList[i].path);
       var endName = FileUtil.getEndName(codeList[i].path);
       var name = FileUtil.getName(codeList[i].path);
       List<int> data = FileUtil.readData(codeList[i].path);
-      if(endName == ".yaml" || endName == ".yml" || endName == ".podspec"){
+      if (endName == ".yaml" || endName == ".yml" || endName == ".podspec") {
         List<int> temp = definedFile22(data);
         FileUtil.writeToFileData(temp, codeList[i].path);
-      }else{
+      } else {
         List<int> temp = definedFile11(data);
         FileUtil.writeToFileData(temp, codeList[i].path);
       }
