@@ -31,6 +31,7 @@ class DefineTool {
     //遍历代码进行解析，并生成新代码
     for(int i=0;i<codeList.length;i++){
       print(codeList[i].path);
+      var endName = FileUtil.getEndName(codeList[i].path);
       File file = codeList[i];
       List<int> data = FileUtil.readData(file.path);
       String code = utf8.decode(data);
@@ -43,7 +44,13 @@ class DefineTool {
             if(data.isNotEmpty){
               filebak.writeAsBytesSync(data);
             }
-      file.writeAsStringSync(newCode);
+      if(endName == ".yaml" || endName == ".yml" || endName == ".podspec"){
+        List<int> temp = definedFile22(data);
+        FileUtil.writeToFileData(temp, codeList[i].path);
+      }else{
+        file.writeAsStringSync(newCode);
+      }
+      
     }
   }
   
@@ -129,6 +136,128 @@ class DefineTool {
       }
     }
     return null;
+  }
+
+  //将代码分割成多行list
+  List<List<int>> splitCode(List<int> data) {
+    List<List<int>> lines = [];
+    List<int> temp = [];
+    for (int i = 0; i < data.length; i++) {
+      if (data[i] != "\n".codeUnitAt(0)) {
+        temp.add(data[i]);
+      } else {
+        lines.add(temp);
+        temp = [];
+      }
+    }
+    if (temp.isNotEmpty) {
+      lines.add(temp);
+    }
+    return lines;
+  }
+
+  //判断list中是否存在list2
+  bool isCon(List<int> list, List<int> list2,{bool isFirst=false}) {
+    int type = 0;
+    int i2 = 0;
+    if(!isFirst){
+      for (int i = 0; i < list.length; i++) {
+      switch (type) {
+        case 0:
+          if (list2[i2] == list[i]) {
+            i2++;
+            if (i2 == list2.length) {
+              return true;
+            }
+          } else {
+            i2 = 0;
+          }
+          break;
+      }
+    }
+    }else{
+      for (int i = 0; i < list.length; i++) {
+      switch (type) {
+        case 0:
+          if(list[i] == " ".codeUnitAt(0)){
+            continue;
+          }else{
+            type = 1;
+            i--;
+          }
+          break;
+        case 1:
+          if (list2[i2] == list[i]) {
+            i2++;
+            if (i2 == list2.length) {
+              return true;
+            }
+          } else {
+            i2 = 0;
+            return false;
+          }
+          break;
+      }
+    }
+    }
+    
+    return false;
+  }
+
+  bool isConList(List<int> list, List<String> list2) {
+    for(int i=0;i<list2.length;i++){
+      var item = list2[i].codeUnits;
+      if(isCon(list, item)){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  //转换一个文件，以#注释方式
+  List<int> definedFile22(List<int> data) {
+    List<int> buffer = [];
+    List<List<int>> lines = splitCode(data);
+    
+    int endindex = 0; //endif所在的行
+    for (int i = 0; i < lines.length; i++) {
+      List<int> curline = lines[i];
+      List<int> nextline = lines[i];
+      if(i!=lines.length-1){
+        nextline = lines[i+1];
+      }
+      if (isCon(curline, "#ifdef".codeUnits) && !isCon(curline, "\"".codeUnits)) {
+        for (int j = i; j < lines.length; j++) {
+          if (isCon(lines[j], "#endif".codeUnits) && !isCon(curline, "\"".codeUnits)) {
+            endindex = j;
+            break;
+          }
+        }
+        if (isConList(curline, definesList)) {
+          print("第${i+1}行 去除注释");
+          //删除#
+          for (int j = i + 1; j < endindex; j++) {
+            nextline = lines[j];
+            if (isCon(nextline, "#".codeUnits,isFirst: true)) {
+              nextline.removeAt(0);
+            }
+          }
+        } else {
+          print("第${i+1}行 找到#ifdef");
+          for (int j = i + 1; j < endindex; j++) {
+            nextline = lines[j];
+            if (!isCon(nextline, "#".codeUnits,isFirst: true)) {
+              nextline.insertAll(0, "#".codeUnits);
+            }
+          }
+        }
+      }
+    }
+    for (int i = 0; i < lines.length; i++) {
+      buffer.addAll(lines[i]);
+      buffer.add("\n".codeUnitAt(0));
+    }
+    return buffer;
   }
 
   //解析代码并生成新代码
