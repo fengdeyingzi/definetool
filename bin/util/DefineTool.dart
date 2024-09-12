@@ -281,15 +281,16 @@ class DefineTool {
         if(keyWordItem.type == KeyWordType.TYPE_ANNOTATION){
           //判断是否是ifdef
           if(keyWordItem.word.contains("#ifdef")){
+            isContains = false;
             defineState = 1;
-            List<String> dlist = keyWordItem.word.split(" ");
-            // print("dlist "+dlist.toString());
-            if(dlist.length>1){
-              for(int n=0;n<dlist.length;n++){
-                String define = dlist[n];
-                if(definesList.contains(define) && !isContains){
+            // List<String> dlist = keyWordItem.word.split(" ");
+            print("dlist "+ keyWordItem.word+","+definesList.toString());
+            if(definesList.length>=1){
+              for(int n=0;n<definesList.length;n++){
+              //   String define = dlist[n];
+                if(keyWordItem.word.contains(definesList[n]) && !isContains){
                   isContains = true;
-                  // print("isContains = true;");
+                  print("isContains = true;");
                 }
               }
               //如果包含则对后面的内容去除注释
@@ -316,11 +317,12 @@ class DefineTool {
             }
           }else if(keyWordItem.word.contains("#ifndef")){
             defineState = 2;
-            List<String> ndlist = keyWordItem.word.split(" ");
-            if(ndlist.length>1){
-              for(int n=0;n<ndlist.length;n++){
-                String define = ndlist[n];
-                if(definesList.contains(define) && !isContains){
+            isContains = false;
+            // List<String> ndlist = keyWordItem.word.split(" ");
+            if(definesList.length>=1){
+              for(int n=0;n<definesList.length;n++){
+                String define = definesList[n];
+                if(keyWordItem.word.contains(define) && !isContains){
                   isContains = true;
                 }
               }

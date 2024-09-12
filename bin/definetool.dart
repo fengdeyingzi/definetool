@@ -6,8 +6,10 @@ import 'util/DefineTool.dart';
 
 */
 void main(List<String> arguments) {
-//    #ifdef WEB
-//    #else
+//    #ifndef WEB
+/**///    #endif
+
+//   #ifdef WINDOWS
 /*  print("Hello windows");*/
 //    #endif
 
