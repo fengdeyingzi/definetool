@@ -19,7 +19,7 @@ jobs:
           - os: windows-latest
             output-name: win_x64/definetool.exe
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: DanTup/gh-actions/setup-dart@master
       - name: platform
         run: file /bin/ls
@@ -33,7 +33,7 @@ jobs:
         run: mkdir -p release/win_x64
       - name: compile to native
         run: dart compile exe bin/definetool.dart -v -o release/${{ matrix.output-name }}
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v4
         with:
           name: face_plus
           path: release
