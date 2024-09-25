@@ -24,7 +24,7 @@ jobs:
       - name: platform
         run: file /bin/ls
       - name: install packages
-        run: pub get
+        run: dart pub get
       - name: make release/linux_x64 directory
         run: mkdir -p release/linux_x64
       - name: make release/macos_x64 directory
