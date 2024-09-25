@@ -13,11 +13,11 @@ jobs:
         include:
           - os: ubuntu-latest
             platform: arm
-            output-name: linux_x64/definetool
+            output-name: definetool
           - os: macOS-latest
-            output-name: macos_x64/definetool
+            output-name: definetool
           - os: windows-latest
-            output-name: win_x64/definetool.exe
+            output-name: definetool.exe
     steps:
       - uses: actions/checkout@v4
       - uses: DanTup/gh-actions/setup-dart@master
@@ -25,16 +25,10 @@ jobs:
         run: file /bin/ls
       - name: install packages
         run: dart pub get
-      - name: make release/linux_x64 directory
-        run: mkdir -p release/linux_x64
-      - name: make release/macos_x64 directory
-        run: mkdir -p release/macos_x64
-      - name: make release/win_x64 directory
-        run: mkdir -p release/win_x64
       - name: compile to native
-        run: dart compile exe bin/definetool.dart -v -o release/${{ matrix.output-name }}
+        run: dart compile exe bin/definetool.dart -v -o ${{ matrix.output-name }}
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: definetool-${{ matrix.os }}
-          path: release*
+          path: definetool*
